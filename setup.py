@@ -27,6 +27,6 @@ setup(
     # Choose your license
     license='MIT',
 
-    py_modules=['azure_logging'],
+    py_modules=['azlogging'],
     # download_url="https://github.com/equinor/azure-logging",
 )
