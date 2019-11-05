@@ -24,17 +24,17 @@ if 'SERVER_NAME' in os.environ:  # Change this to log to azure locally
 
 def info(**kwargs):
     _log_to_event_hub(level="info", **kwargs)
-    logging.info(f'msg:{kwargs.get("message", "None")} elapsed:{kwargs.get("elapsed", "N/A")}')
+    logging.info(f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")}')
 
 
 def warning(**kwargs):
     _log_to_event_hub(level="warning", **kwargs)
-    logging.warning(f'msg:{kwargs.get("message", "None")} elapsed:{kwargs.get("elapsed", "N/A")}')
+    logging.warning(f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")}')
 
 
 def error(**kwargs):
     _log_to_event_hub(level="error", **kwargs)
-    logging.error(f'msg:{kwargs.get("message", "None")}  elapsed: {kwargs.get("elapsed", "N/A")}')
+    logging.error(f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")}')
 
 
 def get_md5_username():
@@ -71,7 +71,15 @@ def _log_to_event_hub(**kwargs):
 
 
 @contextmanager
+def timed(**kwargs):
+    start_time = time.time()
+    yield start_time
+    info(elapsed=time.time() - start_time, **kwargs)
+
+
+@contextmanager
 def _timed_without_event_hub(**kwargs):
     start_time = time.time()
     yield start_time
     logging.info(f'{kwargs["message"]} {str(time.time() - start_time)}')
+
