@@ -42,9 +42,10 @@ def error(**kwargs):
 def get_md5_username():
     try:
         return connexion.context['token_info']['md5_username']
+    except KeyError:
+        return "development"
     except AttributeError:
-        pass
-    return "system"
+        return "system"
 
 
 def setup_logging():
