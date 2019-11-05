@@ -4,6 +4,7 @@ import os
 import time
 import uuid
 from contextlib import contextmanager
+from datetime import datetime
 
 import connexion
 from azure.eventhub import EventHubClient, EventData, EventHubError
@@ -22,21 +23,18 @@ if 'SERVER_NAME' in os.environ:  # Change this to log to azure locally
 
 
 def info(**kwargs):
-    md5_username = get_md5_username()
-    _log_to_event_hub(server_name=server_name, server_id=server_id, level="info", md5_username=md5_username, **kwargs)
-    logging.info(f'msg:{kwargs.get("message", "None")} elapsed:{kwargs.get("elapsed", "N/A")} user: {md5_username}')
+    _log_to_event_hub(level="info", **kwargs)
+    logging.info(f'msg:{kwargs.get("message", "None")} elapsed:{kwargs.get("elapsed", "N/A")}')
 
 
 def warning(**kwargs):
-    md5_username = get_md5_username()
-    _log_to_event_hub(server_name=server_name, server_id=server_id, level="warning", md5_username=md5_username, **kwargs)
-    logging.warning(f'msg:{kwargs.get("message", "None")} elapsed:{kwargs.get("elapsed", "N/A")} user: {md5_username}')
+    _log_to_event_hub(level="warning", **kwargs)
+    logging.warning(f'msg:{kwargs.get("message", "None")} elapsed:{kwargs.get("elapsed", "N/A")}')
 
 
 def error(**kwargs):
-    md5_username = get_md5_username()
-    _log_to_event_hub(server_name=server_name, server_id=server_id, level="error", md5_username=md5_username, **kwargs)
-    logging.error(f'msg:{kwargs.get("message", "None")}  elapsed: {kwargs.get("elapsed", "N/A")}  user: {md5_username}')
+    _log_to_event_hub(level="error", **kwargs)
+    logging.error(f'msg:{kwargs.get("message", "None")}  elapsed: {kwargs.get("elapsed", "N/A")}')
 
 
 def get_md5_username():
@@ -60,7 +58,14 @@ def setup_logging():
 def _log_to_event_hub(**kwargs):
     try:
         if producer is not None:
-            producer.send(EventData(json.dumps(kwargs)))
+            md5_username = get_md5_username()
+            producer.send(EventData(json.dumps({
+                "md5_username": md5_username,
+                "server_name": server_name,
+                "server_id": server_id,
+                "timestamp": str(datetime.now()),
+                **kwargs
+            })))
     except EventHubError as e:
         logging.error(f"Could not log to event hub: {e}")
 
