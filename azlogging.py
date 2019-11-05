@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 import os
@@ -39,7 +40,8 @@ def error(**kwargs):
 
 def get_md5_username():
     try:
-        return connexion.context['token_info']['md5_username']
+        username = connexion.context['token_info']['username']
+        return hashlib.md5(username.encode('utf-8')).hexdigest()
     except KeyError:
         return "development"
     except AttributeError:
