@@ -29,4 +29,9 @@ setup(
 
     py_modules=['azlogging'],
     # download_url="https://github.com/equinor/azure-logging",
+
+    install_requires=[
+        'azure-eventhub==5.0.0b3',
+        'connexion~=2.4.0'
+    ]
 )
