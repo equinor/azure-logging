@@ -85,3 +85,5 @@ def _timed_without_event_hub(**kwargs):
     yield start_time
     logging.info(f'{kwargs["message"]} {str(time.time() - start_time)}')
 
+
+setup_logging()
