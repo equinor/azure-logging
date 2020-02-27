@@ -1,1 +1,2 @@
 azure-eventhub==5.0.0b3
+connexion~=2.4.0
