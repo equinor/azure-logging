@@ -23,19 +23,23 @@ if 'SERVER_NAME' in os.environ:  # Change this to log to azure locally
     producer = client.create_producer(partition_id="0")
 
 
+def format_kwargs(**kwargs):
+    return f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")} query:{kwargs.get("query", "None")}'
+
+
 def info(**kwargs):
     _log_to_event_hub(level="info", **kwargs)
-    logging.info(f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")}')
+    logging.info(format_kwargs(**kwargs))
 
 
 def warning(**kwargs):
     _log_to_event_hub(level="warning", **kwargs)
-    logging.warning(f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")}')
+    logging.warning(format_kwargs(**kwargs))
 
 
 def error(**kwargs):
     _log_to_event_hub(level="error", **kwargs)
-    logging.error(f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")}')
+    logging.error(format_kwargs(**kwargs))
 
 
 def get_md5_username():
@@ -75,6 +79,7 @@ def _log_to_event_hub(**kwargs):
 @contextmanager
 def timed(**kwargs):
     start_time = time.time()
+    info(starting=start_time, **kwargs)
     yield start_time
     info(elapsed=time.time() - start_time, **kwargs)
 
