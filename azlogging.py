@@ -24,7 +24,12 @@ if 'SERVER_NAME' in os.environ:  # Change this to log to azure locally
 
 
 def format_kwargs(**kwargs):
-    return f'msg:{kwargs.get("message", "None")} {kwargs.get("elapsed", "")} query:{kwargs.get("query", "None")}'
+    start_time = kwargs.get("starting", None)
+    elapsed_time = kwargs.get("elapsed", None)
+    return f'msg:{kwargs.get("message", "None")} ' \
+           f'query:{kwargs.get("query", "None")} ' \
+           f'{f"Starting" if start_time is not None else ""}' \
+           f'{f"Elapsed time: {elapsed_time} " if elapsed_time is not None else ""}'
 
 
 def info(**kwargs):
